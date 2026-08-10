@@ -105,3 +105,173 @@ const coordinates = [33.6844, 73.0479];
 // Foren destructure karein taake samajh aaye kya hai
 const [lat, lng] = coordinates;
 console.log(`User is at Latitude: ${lat}`);
+
+// 14. splice()
+
+// Description: Array ko add, remove, ya replace karne ka sabse powerful method.Original array mutate hota hai aur removed elements ka array return karta hai(agar koi nahi remove hua toh empty array).
+// Signature: array.splice(start, deleteCount, item1, item2, ...)
+// start: index jahan se shuru karna hai
+// deleteCount: kitne elements hataane hain(0 agar bas add karna ho)
+// item1, item2...: add karne wale elements(optional)
+
+// Example(remove):
+const number = [1, 2, 3, 4, 5];
+const remove = number.slice(2, 2);
+console.log(remove) // index 2, se 2 element removed.
+console.log(number) // 1,2,5
+// Example(add only):
+const num = ['a', 'c'];
+num.slice(2, 0, 'b');
+console.log(num) // ['a','b','c']
+// Example(replace):
+const AddNum = [1, 2, 3];
+AddNum.slice(1, 1, 10)
+console.log(AddNum) // 1,10,3
+
+// 15. toString()
+// Description: Array ko comma‑separated string mein convert karta hai(har element apna toString() call karta hai).Original array change nahi karta.
+//     Example:
+const arr = [1, 'hello', true, null];
+console.log(arr.toString()); // "1,hello,true,"
+console.log([1, 2, 3].toString()); // "1,2,3"
+
+// Note: join() ke saath compare karo — toString() hamesha comma use karta hai, jabki join() me separator choose kar sakte ho.
+
+// 16. indexOf()
+
+// Description: Array ko left - se - right dhundhta hai — pehla index jahan given value milta hai return karta hai.Agar na mile toh - 1. Strict equality(===) use karta hai.Original array change nahi karta.
+// Example:
+
+const words = ['cat', 'dog', 'bird', 'dog'];
+console.log(words.indexOf('dog')); // 1 (pehla occurrence)
+console.log(words.indexOf('fish')); // -1
+console.log(words.indexOf('dog', 2)); // 3 (search start index 2 se)
+
+// 17. lastIndexOf()
+// Description: Array ko right - se - left dhundhta hai — last index jahan given value milta hai return karta hai.Agar na mile toh - 1. Original array change nahi karta.
+//     Example:
+const arr = [1, 2, 3, 2, 1];
+console.log(arr.lastIndexOf(2)); // 3
+console.log(arr.lastIndexOf(5)); // -1
+console.log(arr.lastIndexOf(2, 2)); // 1 (search end index 2 tak)
+
+// 18. join()
+// Description: Array ke saare elements ko ek string mein jodta hai — separator as argument (default comma). Original array change nahi karta.
+//     Example:
+const parts = ['Hello', 'world', 'from', 'JS'];
+console.log(parts.join(' ')); // "Hello world from JS"
+console.log(parts.join('-')); // "Hello-world-from-JS"
+console.log(parts.join(''));  // "HelloworldfromJS"
+console.log(parts.join());    // "Hello,world,from,JS" (default comma)
+
+// Note: Agar array me undefined ya null ho toh empty string join hota hai:
+// console.log([1, null, 3].join('#')); // "1##3"
+
+// 19. reverse()
+// Description: Array ko in‑place reverse karta hai(original array mutate hota hai) aur reversed array ka reference return karta hai.
+//     Example:
+const arr = [1, 2, 3, 4];
+console.log(arr.reverse()); // [4,3,2,1]
+console.log(arr);           // [4,3,2,1] (mutated)
+(6 / 8)
+// Note: Agar tumhe original ko preserve rakhna ho, toh pehle slice() kar lo:
+const original = [1, 2, 3];
+const reversed = original.slice().reverse(); // copy pe reverse
+console.log(original); // [1,2,3] unchanged
+console.log(reversed); // [3,2,1]
+
+// 🧠 Quick Revision Table
+// concat()
+// • Mutates?: ❌
+// • Return Value: New array (joined)
+// • Typical Use: Combine arrays
+
+// every()
+// • Mutates?: ❌
+// • Return Value: true/false
+// • Typical Use: Check all pass condition
+
+// filter()
+// • Mutates?: ❌
+// • Return Value: New array (passing items)
+// • Typical Use: Select subset
+
+// find()
+// • Mutates?: ❌
+// • Return Value: First matching item or undefined
+// • Typical Use: Find single item
+
+// forEach()
+// • Mutates?: ❌
+// • Return Value: undefined (void)
+// • Typical Use: Side‑effects (log, DOM)
+
+// map()
+// • Mutates?: ❌
+// • Return Value: New array (transformed)
+// • Typical Use: Transform each item
+
+// pop()
+// • Mutates?: ✅
+// • Return Value: Removed last element
+// • Typical Use: Stack‑like LIFO
+
+// push()
+// • Mutates?: ✅
+// • Return Value: New length
+// • Typical Use: Add to end
+
+// reduce()
+// • Mutates?: ❌
+// • Return Value: Single accumulated value
+// • Typical Use: Sum, product, flatten, etc.
+
+// shift()
+// • Mutates?: ✅
+// • Return Value: Removed first element
+// • Typical Use: Queue‑like FIFO
+
+// unshift()
+// • Mutates?: ✅
+// • Return Value: New length
+// • Typical Use: Add to front
+
+// slice()
+// • Mutates?: ❌
+// • Return Value: New array (section)
+// • Typical Use: Copy or sub‑array
+
+// sort()
+// • Mutates?: ✅
+// • Return Value: Sorted array (same ref)
+// • Typical Use: Order items
+
+// splice()
+// • Mutates?: ✅
+// • Return Value: Removed items (array)
+// • Typical Use: Add/remove/replace
+
+// toString()
+// • Mutates?: ❌
+// • Return Value: Comma‑separated string
+// • Typical Use: Quick string view
+
+// indexOf()
+// • Mutates?: ❌
+// • Return Value: First index or -1
+// • Typical Use: Find position
+
+// lastIndexOf()
+// • Mutates?: ❌
+// • Return Value: Last index or -1 (7/8)
+// • Typical Use: Find position from end
+
+// join()
+// • Mutates?: ❌
+// • Return Value: String with separator
+// • Typical Use: Build CSV/space‑delimited
+
+// reverse()
+// • Mutates?: ✅
+// • Return Value: Reversed array (same ref)
+// • Typical Use: Flip order
