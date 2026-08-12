@@ -213,7 +213,7 @@ function greet2(city, country) {
     console.log(`Mera naam ${this.name} hai, main ${city}, ${country} se hoon.`);
 }
 
-const user = { name: "Ibad" };
+const user = { name: "Rahid" };
 
 // Immediate call + comma separated arguments
 greet2.call(user, "Karachi", "Pakistan");
@@ -222,3 +222,124 @@ greet2.call(user, "Karachi", "Pakistan");
 
 // Immediate call + Array of arguments
 greet2.apply(user, ["Karachi", "Pakistan"]);
+
+// 3. bind()
+// Execution: Function ko fauran run NAHI karta.
+
+// Return Value: Yeh ek naya function return karta hai jiska this context permanently fix ho chuka hota hai.Aap is naye function ko baad mein kabhi bhi execute kar sakte hain.
+
+//     JavaScript
+// Immediate run nahi hoga, pehle naya function banega
+const myBoundFunc = greet.bind(user, "Karachi", "Pakistan");
+
+// Baad mein jab zaroorat ho run karein:
+myBoundFunc();
+
+//! 14. Explain event delegation in JavaScript.
+// Answer: Instead of attaching an event listener to each individual element, you attach a single listener to a parent element.The listener uses event.target(or event.delegateTarget) to determine which child triggered the event.
+
+// Example(delegating clicks on list items):
+// JavaScript
+
+document.getElementById('menu').addEventListener('click', function (e) {
+    if (e.target.tagName === 'LI') {
+        console.log('Clicked item:', e.target.textContent);
+    }
+});
+// Only one listener is needed, even if <li> items are added/removed dynamically.
+
+//! 20. What is the difference between null and undefined?
+// Answer:
+// - undefined means a variable has been declared but not assigned a value(or a function returns nothing).
+// - null is an assignment value representing “no value” or “empty”. It is an object type(historical bug).
+
+
+let a; // undefined
+console.log(a);
+
+let b = null 
+console.log(b) // null
+
+//! 21. How do you empty an array in JavaScript?
+// Answer: Set its length to 0 (mutates the original) or reassign a new empty array (if no other references).
+
+let arr = [1, 2, 3];
+arr.length = 0; // []  – preferred when other references shouldn't retain old values
+// or
+arr = [];  // new empty array (old array may be GC'd if no other refs)
+
+//! 23. What is the difference between localStorage and sessionStorage?
+
+// Both are used for web storage Apis (key-value, string).
+// - localStorage: data persists until explicitly cleared; survives browser / tab closes.
+// - SessionStorage:  data persists only for the duration of the page session (as long as the tab/window is open).
+// Reloading the page keeps it; opening a new tab / window starts a fresh session.
+
+localStorage.setItem('theme', 'dark');
+sessionStorage.setItem('temToken', 'abc127');
+
+// 24. How do you deep clone an object in JavaScript ?
+//   Answer : There’s no built‑in deep copy, but common ways:
+// - JSON.parse / stringify(works for JSON‑serializable data).
+// - Structured cloning via structuredClone()(modern browsers / Node).
+// - Recursive copy or libraries like Lodash’s _.cloneDeep.
+
+const original = { a: 1, b: { c: 2 }, d: [3, 4] };
+const clone = structuredClone(original);
+clone.b.c = 99;
+console.log(original); // 2(Unchanged).
+console.log(clone) // 99
+
+// JSON method(limited):
+// JavaScript
+
+const clone = JSON.parse(JSON.stringify(original));
+
+//! 26. Explain the concept of prototypal inheritance in JavaScript.
+// Answer: Objects can inherit properties from other objects via their prototype ([[Prototype]]).
+// When you look up a property, JavaScript first checks the object itself; if not found, it looks at Object.getPrototypeOf(obj),
+// then its prototype, and so on up to Object.prototype.
+
+// Example(using Object.create):  
+const animal = {
+    speak(): {
+        return `${this.name} make a noise`
+    },
+};
+
+const dog = Object.create(animal);
+dog.name = 'Rex';
+console.log(dog.speak()); // "Rex makes a noise"
+
+
+// animal has methods
+let animal = {
+    walk() {
+        if (!this.isSleeping) {
+            alert(`I walk`);
+        }
+    },
+    sleep() {
+        this.isSleeping = true;
+    }
+};
+
+let rabbit = {
+    name: "White Rabbit",
+    __proto__: animal
+};
+
+rabbit.sleep();
+alert(rabbit.isSleeping); // true
+alert(animal.isSleeping); // undefined (no such property in the prototype)
+
+let rabbit {
+    rabbitJump = true;
+};
+
+let animal {
+    animalEat = true
+};
+Object.setPrototypeOf(rabbit, animal)
+console.log(rabbit.animalEats);
+console.log(rabbit.rabbitJumps);
