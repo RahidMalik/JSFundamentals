@@ -257,7 +257,7 @@ document.getElementById('menu').addEventListener('click', function (e) {
 let a; // undefined
 console.log(a);
 
-let b = null 
+let b = null
 console.log(b) // null
 
 //! 21. How do you empty an array in JavaScript?
@@ -302,7 +302,7 @@ const clone = JSON.parse(JSON.stringify(original));
 
 // Example(using Object.create):  
 const animal = {
-    speak(): {
+    speak() {
         return `${this.name} make a noise`
     },
 };
@@ -333,13 +333,24 @@ rabbit.sleep();
 alert(rabbit.isSleeping); // true
 alert(animal.isSleeping); // undefined (no such property in the prototype)
 
-let rabbit {
-    rabbitJump = true;
+let rabbit1 = {
+    rabbitJump = true
 };
 
-let animal {
+let animal1 = {
     animalEat = true
 };
-Object.setPrototypeOf(rabbit, animal)
+Object.setPrototypeOf(rabbit1, animal1)
 console.log(rabbit.animalEats);
 console.log(rabbit.rabbitJumps);
+
+
+// Answer: JavaScript is single‑threaded.The event loop continuously checks the call stack; when it’s empty, it takes the first task from the task queue(macrotasks like setTimeout, I / O callbacks) and pushes it onto the call stack.Microtasks(promise reactions, queueMicrotask) have higher priority – they are drained after each macrotask before the next macrotask runs.
+
+console.log('start');
+
+setTimeout(() => console.log('timeout'), 0);
+
+Promise.resolve().then(() => console.log('promise'));
+
+console.log('end');
