@@ -263,10 +263,10 @@ console.log(b) // null
 //! 21. How do you empty an array in JavaScript?
 // Answer: Set its length to 0 (mutates the original) or reassign a new empty array (if no other references).
 
-let arr = [1, 2, 3];
-arr.length = 0; // []  – preferred when other references shouldn't retain old values
+let array = [1, 2, 3];
+array.length = 0; // []  – preferred when other references shouldn't retain old values
 // or
-arr = [];  // new empty array (old array may be GC'd if no other refs)
+array = [];  // new empty array (old array may be GC'd if no other refs)
 
 //! 23. What is the difference between localStorage and sessionStorage?
 
@@ -293,7 +293,8 @@ console.log(clone) // 99
 // JSON method(limited):
 // JavaScript
 
-const clone = JSON.parse(JSON.stringify(original));
+const clone2 = JSON.parse(JSON.stringify(original));
+console.log(clone2)
 
 //! 26. Explain the concept of prototypal inheritance in JavaScript.
 // Answer: Objects can inherit properties from other objects via their prototype ([[Prototype]]).
@@ -313,7 +314,7 @@ console.log(dog.speak()); // "Rex makes a noise"
 
 
 // animal has methods
-let animal = {
+let animal1 = {
     walk() {
         if (!this.isSleeping) {
             alert(`I walk`);
@@ -326,7 +327,7 @@ let animal = {
 
 let rabbit = {
     name: "White Rabbit",
-    __proto__: animal
+    __proto__: animal1
 };
 
 rabbit.sleep();
@@ -337,10 +338,10 @@ let rabbit1 = {
     rabbitJump = true
 };
 
-let animal1 = {
+let animal2 = {
     animalEat = true
 };
-Object.setPrototypeOf(rabbit1, animal1)
+Object.setPrototypeOf(rabbit1, animal2)
 console.log(rabbit.animalEats);
 console.log(rabbit.rabbitJumps);
 
@@ -354,3 +355,120 @@ setTimeout(() => console.log('timeout'), 0);
 Promise.resolve().then(() => console.log('promise'));
 
 console.log('end');
+
+//! What is the difference between setTimeout, setInterval, and requestAnimationFrame?  
+// setTimeout
+const time = setTimeout(() => {
+    console.log("3 sec complete")
+}, 300)
+// setInterval
+let countStart = 0;
+const Looping = setInterval(() => {
+    countStart++;
+    console.log(` Sec: ${countStart}`);
+
+    if (countStart >= 10) clearInterval(Looping)
+}, 3000);
+// 3. requestAnimationFrame(Smooth Visual Animations
+let boxPosition = 0;
+
+function animate() {
+    boxPosition += 2;
+    document.getElementById("box").style.left = boxPosition + "px";
+
+    if (boxPosition < 300) {
+        // Agle frame par dobara call karne ke liye recursive call
+        requestAnimationFrame(animate);
+    }
+}
+
+// Animation start
+requestAnimationFrame(animate);
+
+//! 29. What is currying in JavaScript? Give an example.
+const applyDiscount = (discount) => (price) => price - (price * discount / 100);
+//* Currying ek Coding Technique hai...
+
+//* Jo HOF ke Structure par chalti hai...
+
+//* Aur Closure ki Memory ko istemal karti hai!
+
+// 💻 Code Comparison
+// ❌ Without HOF(Simple Normal Function)
+
+// Dono parameters ek hi function mein le liye
+const applyDiscount = (discount, price) => {
+    return price - (price * discount / 100);
+};
+
+// 🚀 Usage: Dono values ek sath pass hungi
+console.log(applyDiscount(10, 1000)); // Output: 900
+
+// ✅ With HOF & Currying(Jo aapne likha tha)
+// Pehla function discount leta hai aur ek naya function return karta hai
+const applyDiscount = (discount) => (price) => {
+    return price - (price * discount / 100);
+};
+
+// 🚀 Usage: Execution do steps mein hoti hai
+console.log(applyDiscount(10)(1000)); // Output: 900
+
+//! What is memoization and how do you implement it in JavaScript ?  
+// ⚛️ React `useMemo` (Component lifecycle se tied hai)
+// Component re-render hone par heavy value re-calculate hone se bachata hai.
+const filteredData = useMemo(() => heavyFilter(items), [items]);
+
+// ⚡ Plain JS `memoize()` (Global / Universal Cache)
+// Jab same inputs par poori app mein kahin bhi calculation repeat ho rahi ho (Component mount/unmount hone ke BAAD bhi cache rehta hai).
+const fastCalculation = memoize(heavyCalculation);
+
+//  What are promises in JavaScript? Explain the three states of a promise.  
+// 1. Promise Banayein (Producer)
+const fetchData = new Promise((resolve, reject) => {
+    let isSuccess = true;
+
+    // Simulate 2-second server delay (Pending state)
+    setTimeout(() => {
+        if (isSuccess) {
+            resolve("Data Successfully Mil Gaya!"); // State -> Fulfilled
+        } else {
+            reject("Server Connection Failed!"); // State -> Rejected
+        }
+    }, 2000);
+});
+
+//! 2. Promise Consume Karein (Consumer)
+// Pehle 2 sec tak promise 'Pending' state mein rahega
+fetchData
+    .then((response) => {
+        console.log("✅ SUCCESS:", response); // Runs if Fulfilled
+    })
+    .catch((error) => {
+        console.log("❌ ERROR:", error); // Runs if Rejected
+    })
+    .finally(() => {
+        console.log("🔄 Operation Finish (Settled)"); // Runs regardless of state
+    });
+
+// ⚛️ Aap aise likhte hain:
+const fetchData = async () => {
+    try {
+        const res = await fetch('/api/user'); // 👈 await Promise ka intezar kar raha hai
+        const data = await res.json();
+        setUser(data);
+    } catch (error) {
+        console.log("Error aagaya:", error); // 👈 Agar Promise REJECT hua toh catch chalega
+    }
+};
+
+// ❌ Slow (One by one: Total time = 1s + 1s + 1s = 3 seconds)
+const user = await fetchUser();
+const posts = await fetchPosts();
+const comments = await fetchComments();
+
+// ✅ Fast (Parallel: Teeno ek sath chalenge, Total time = ~1 second)
+const [user, posts, comments] = await Promise.all([
+    fetchUser(),
+    fetchPosts(),
+    fetchComments()
+]);
