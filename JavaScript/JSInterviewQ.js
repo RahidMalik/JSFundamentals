@@ -472,3 +472,43 @@ const [user, posts, comments] = await Promise.all([
     fetchPosts(),
     fetchComments()
 ]);
+
+const p = new Promise((resolve, reject) => {
+    setTimeout(() => {
+        const success = true;
+        if (success) resolve('Data loaded');
+        else reject('Error occurred');
+    }, 1000);
+});
+
+p.then(msg => console.log(msg))   // "Data loaded" after 1s
+    .catch(err => console.error(err));
+
+//! What is the difference between Promise.all(), Promise.race(), and Promise.allSettled() ?
+
+// ❌ Agar ek bhi fail hua toh direct .catch() mein chala jayega
+Promise.all([fetchUsers(), fetchPosts(), fetchComments()])
+    .then(([users, posts, comments]) => console.log("Saara data mil gaya!"))
+    .catch(err => console.log("Ek API fail ho gayi, sab canceled!", err));
+
+// 2. Promise.allSettled() $\rightarrow$ "Fail Ho Ya Pass, Sab Ka Report Chahiye"
+Promise.allSettled([sendEmail1(), sendEmail2(), sendEmail3()])
+    .then(results => {
+        results.forEach((res, index) => {
+            if (res.status === 'fulfilled') console.log(`Email ${index} sent!`);
+            if (res.status === 'rejected') console.log(`Email ${index} failed:`, res.reason);
+        });
+    });
+
+// Best Use Case: Bulk tasks ya independent operations(jaise 100 emails bhejna ya multiple files upload karna), jahan 1 - 2 fail bhi ho jayein toh baki process rukna nahi chahiye.
+
+// 3. Promise.race() $\rightarrow$ "Jo Sab Se Pehle Pahunche (Fastest)"
+
+const apiCall = fetch('/api/data');
+const timeout = new Promise((_, reject) => setTimeout(() => reject("Timeout!"), 3000));
+
+// Jo pehle 3 sec mein complete hoga woh jeet jayega
+Promise.race([apiCall, timeout])
+    .then(res => console.log("API Fast thi:", res))
+    .catch(err => console.log("API Slow thi ya crash hui:", err));
+//   Best Use Case: API Request timeout feature lagane ke liye, ya multiple mirror servers se sab se fast response lene ke liye.
