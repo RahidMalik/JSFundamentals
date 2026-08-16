@@ -512,3 +512,187 @@ Promise.race([apiCall, timeout])
     .then(res => console.log("API Fast thi:", res))
     .catch(err => console.log("API Slow thi ya crash hui:", err));
 //   Best Use Case: API Request timeout feature lagane ke liye, ya multiple mirror servers se sab se fast response lene ke liye.
+
+//!. Explain the concept of hoisting with respect to function declarations and function expressions.
+// ✅ Function define hone se pehle call kar diya:
+sayHello(); // Output: "Hello World!"
+
+// Function Declaration
+function sayHello() {
+    console.log("Hello World!");
+}
+
+// ❌ Call karne par TypeError aayega:
+sayHello(); // TypeError: sayHello is not a function
+
+var sayHello = function () {
+    console.log("Hello World!");
+};
+//! What is the difference between shallow copy and deep copy in JavaScript ? Give examples of each.
+// Dono mein sab se bada farq Nested Objects(Objects ke andar Objects / Arrays) ko handle karne ka hota hai.
+
+// 1. Shallow Copy(Sathi Copy)
+// Definition: Shallow Copy sirf outer / top - level properties ki nayi memory banata hai.Agar object ke andar koi nested object ya array ho, toh yeh unka actual data copy nahi karta, balki unka Memory Reference(pointer) share karta hai.
+
+//     Result: Outer level change karne se original object par farq nahi parta, lekin nested object change karne se Original Object bhi badal jata hai.
+
+const originalUser = {
+    name: "Ibad",
+    address: {
+        city: "Karachi",
+        country: "Pakistan"
+    }
+};
+
+// Spread Operator (...) se Shallow Copy banayi:
+const shallowCopy = { ...originalUser };
+
+// 1. Top-level property change karein:
+shallowCopy.name = "Ali";
+
+// 2. Nested property change karein:
+shallowCopy.address.city = "Lahore";
+
+console.log(originalUser.name);         // Output: "Ibad" (Top-level Safe rehta hai)
+console.log(originalUser.address.city); // Output: "Lahore" ❌ (Original bhi change ho gaya!)
+
+// 🛠️ Shallow Copy Banane Ke Tareeqay:
+// Spread Operator: { ...obj } ya[ ...arr ]
+
+// Object.assign: Object.assign({}, obj)
+
+// Array Methods: arr.slice() ya Array.from(arr)
+
+// 2. Deep Copy(Gahri Copy)
+// Definition: Deep Copy original object ke har level(nested structures sahit) ko completely, recursively naye memory address par copy karta hai.
+
+//     Result: Copy wale object mein koi bhi change karein(chahe outer ho ya nested), Original Object 100 % safe aur unchanged rehta hai.
+
+const originalUser = {
+    name: "Ibad",
+    address: {
+        city: "Karachi",
+        country: "Pakistan"
+    }
+};
+
+// Modern Native JS Method: structuredClone()
+const deepCopy = structuredClone(originalUser);
+
+// Nested property change karein:
+deepCopy.address.city = "Lahore";
+
+console.log(deepCopy.address.city);     // Output: "Lahore"
+console.log(originalUser.address.city); // Output: "Karachi" ✅ (Original bilkul safe hai!)
+
+// structuredClone() (Modern JS - Best Practice):
+
+// Modern browsers aur Node.js mein built -in hai.Complex structures, dates, aur maps ko easily deep copy karta hai.
+
+//     JavaScript
+// const deepCopy = structuredClone(originalObj);
+// JSON.parse(JSON.stringify())(Purana Workaround):
+
+// Pehle zayada use hota tha, lekin iski kuch limitations hain(yeh Functions, undefined, ya Symbol ko drop kar deta hai).
+const deepCopy = JSON.parse(JSON.stringify(originalObj));
+
+
+//! ❌ Without Event Delegation(Purana / Kharab Tareeqa):
+// Isme hum querySelectorAll karke loop chalate hain aur har item par alag listener lagate hain:
+
+// ❌ Agara 1000 items hue, toh memory mein 1000 event listeners ban jayenge!
+document.querySelectorAll('#todo-list li').forEach((item) => {
+    item.addEventListener('click', (e) => {
+        console.log("Clicked:", e.target.textContent);
+    });
+});
+
+const todoList = document.getElementById('todo-list');
+
+// ✅ Sirf 1 listener parent par lagaya
+todoList.addEventListener('click', (e) => {
+    // 🔍 Check karein ke click sirf 'LI' par hi hua hai na?
+    if (e.target.tagName === 'LI') {
+        console.log("Clicked:", e.target.textContent);
+    }
+});
+
+// ! syncronus(blocking)
+
+console.log("1. Order diya");
+
+// Heavy calculation / delay (Wait karna parega)
+alert("2. Khaana ban raha hai...");
+
+console.log("3. Khaana kha liya");
+
+// Output:
+// 1. Order diya
+// (Pop-up ko jab tak OK nahi karenge, line 3 nahi chalegi)
+// 2. Khaana ban raha hai...
+// 3. Khaana kha liya
+
+// ! asyncronus(Non-Blocking)
+
+console.log("1. Order diya");
+
+// Background task (2 seconds ka timer)
+setTimeout(() => {
+    console.log("2. Khaana ready ho gaya!");
+}, 2000);
+
+console.log("3. Table par baith gaye");
+
+// Output:
+// 1. Order diya
+// 3. Table par baith gaye
+// 2. Khaana ready ho gaya! (2 sec baad background se aaya)
+
+// JavaScript inherently Single-Threaded (ek waqt mein ek kaam karne wali) language hai. Synchronously heavy operations karne se browser/app hang ho jati hai.
+
+// Isi waja se JS Event Loop aur Asynchronous Web APIs ka sahara leti hai taake heavy tasks background mein hote rahein aur app fast aur smooth chale!
+
+//! 🧱 1. Key Components Ka Role
+// Call Stack(LIFO - Last In, First Out):
+
+// JS engine ka "working table".Jahan aapka synchronous code ek ek karke execute hota hai.
+
+//     Single - threaded hone ki waja se JS ek waqt mein Call Stack par sirf ek hi line execute kar sakti hai.
+
+// Web APIs / Background Threads:
+
+// Jab JS ko koi asynchronous kaam milta hai(jaise 2 sec ka timer ya API call), JS use Web API ko hand - over kar deta hai taake Call Stack block na ho.
+
+// Microtask Queue(VIP / High Priority Queue):
+
+// Promises ka response(.then(), .catch (), .finally()), queueMicrotask(), aur MutationObserver yahan aate hain.
+
+//     Rule: Is queue ki priority bohot high hoti hai.
+
+// Macrotask Queue / Callback Queue(Normal Priority):
+
+// setTimeout, setInterval, setImmediate, aur DOM Events(clicks, inputs) ke callbacks yahan aate hain.
+
+// Event Loop:
+
+// Yeh ek continuous loop / watchdog hai jo 24 / 7 sirf do cheezein check karta hai:
+
+// Kya Call Stack bilkul khali hai ?
+
+//     Agar Stack khali hai, toh pehle Microtask Queue ke saare tasks ko Stack mein bhejo.Jab woh zero ho jayein, tab Macrotask Queue se 1 task uthao.
+
+// 1. VVIP (Normal Code)
+console.log("1. Dulha: Main khana kha raha hoon!");
+
+// 2. AAM JANTA (Macrotask) -> Isko 0 second ka time diya hai
+setTimeout(() => {
+    console.log("2. Aam Janta: Hamari bari sabse end mein aayi (Macrotask)");
+}, 0);
+
+// 3. VIP (Microtask)
+Promise.resolve().then(() => {
+    console.log("3. VIP Rishtedaar: Dulhay ke baad foran meri bari (Microtask)");
+});
+
+// 4. VVIP (Normal Code)
+console.log("4. Dulhay ka Dost: Main bhi direct khaunga!");
