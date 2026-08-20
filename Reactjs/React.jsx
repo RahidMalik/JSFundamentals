@@ -650,7 +650,7 @@ export default function App() {
             <Parent />
         </UserContext.Provider>
     );
-}
+};
 //& Step 3: Deep Child Mein Consume Karein(DeepChild.jsx)
 import React, { useContext } from 'react';
 import { UserContext } from './UserContext';
@@ -666,3 +666,150 @@ export default function DeepChild() {
         </div>
     );
 };
+// "Context API ko implement karne ke 3 steps hote hain:
+
+// createContext(): Sub se pehle hum createContext() call karke ek Context Object create karte hain.
+
+// <Context.Provider >: Top - level parent component par Provider component wrap karte hain aur value prop mein woh state ya function pass kar dete hain jo hum share karna chahte hain.
+
+// useContext(): Deep nested child components mein hum useContext(ContextName) hook call karke us data ko directly consume kar lete hain, bina intermediate components ko useless props pass kiye."
+
+//! Automatic Batching kya hai?
+// React 17 tak batching sirf React event handlers (onClick, onChange) mein hoti thi. React 18 mein Automatic Batching aagayi hai, matlab ab setTimeout, fetch promises, aur native event listeners ke andar bhi multiple states update karne par sirf 1 hi re-render hota hai.
+
+// React 18 Mein Auto-Batching Example
+setTimeout(() => {
+    setCount(c => c + 1);
+    setFlag(f => !f);
+    // React 18 in dono updates ko 1 re-render mein merge kar dega!
+}, 1000);
+// "Automatic batching in React 18 automatically groups multiple state updates into a single re-render, regardless of where they are called—including promises, timeouts, or native event handlers. This optimizes application performance by preventing unnecessary intermediate re-renders."
+//! 19. useTransition(slow UI updates handle karna) kya hai ?
+// 19. useTransition ⏳
+// useTransition React 18 ka Hook hai jo heavy UI updates ko non - urgent(background) mark karne ke liye use hota hai, taake user ki screen freeze na ho.
+
+// React mein 2 types ki updates hoti hain:
+
+// Urgent Updates: User input, typing, clicking(Inka instant response hona chahiye).
+
+// Transition Updates: Heavy list render karna, thousands of items filter karna(Inko thoda time lag sakta hai).
+
+import { useState, useTransition } from 'react';
+
+function SearchList() {
+    const [isPending, startTransition] = useTransition();
+    const [query, setQuery] = useState('');
+    const [list, setList] = useState([]);
+
+    const handleChange = (e) => {
+        // 1. Urgent: Typing input field mein turant dikhni chahiye
+        setQuery(e.target.value);
+
+        // 2. Non-Urgent: Heavy filtering background mein hogi
+        startTransition(() => {
+            setList(heavyFilteringFunction(e.target.value));
+        });
+    };
+
+    return (
+        <div>
+            <input type="text" value={query} onChange={handleChange} />
+            {isPending ? <p>Loading heavy data... ⏳</p> : <List items={list} />}
+        </div>
+    );
+}
+//! 20. useDeferredValue kya hai ?
+// - Value ko delay(defer) karne ka hook – jisme UI pehle purani value se render hoti hai, pehle update ke baad nayi value background mei process hoti hai.  
+//     - Useful for input debounce‑like behavior without manual timeout:
+
+// JavaScript
+
+// const deferredQuery = useDeferredValue(query); // laggy update
+// <SlowList query={deferredQuery} /> // renders with slight delay
+
+//! 21. Hydration kya hai ?
+// - Server‑side rendered HTML ko client‑side React se “attach” karna – event listeners add karna, state ko reconcile karna(bina markup dobara render kiye).  
+//     - React DOM hydrateRoot(or hydrate in older versions) use karta hai.  
+//     - Agar server aur client markup mismatch ho toh warning / error – key props, deterministic render, ya suppressHydrationWarning attribute use karna padta hai.
+//! 22. Debouncing kya hai ?
+import React, { useState, useCallback } from 'react';
+
+// Custom Debounce Utility Function
+function debounce(func, delay) {
+    let timer;
+    return function (...args) {
+        clearTimeout(timer);
+        timer = setTimeout(() => {
+            func.apply(this, args);
+        }, delay);
+    };
+}
+
+export default function DebounceSearch() {
+    const [text, setText] = useState('');
+
+    // 💡 CRITICAL: useCallback ensures ke debounce function har re-render par dobara na bane!
+    const sendApiRequest = useCallback(
+        debounce((query) => {
+            console.log('🚀 API Call Fired For:', query);
+        }, 500),
+        [] // Empty dependency array keeps the function instance stable
+    );
+
+    const handleChange = (e) => {
+        const value = e.target.value;
+        setText(value); // UI Updates instantly
+        sendApiRequest(value); // API call debounced
+    };
+
+    return (
+        <div style={{ padding: '20px' }}>
+            <h3>Debounced Search Bar 🔍</h3>
+            <input
+                type="text"
+                value={text}
+                onChange={handleChange}
+                placeholder="Type something..."
+            />
+            <p>Live Input State: {text}</p>
+        </div>
+    );
+}
+//! throttle
+import React, { useState, useRef } from 'react';
+
+export default function ThrottledButton() {
+    const [clickCount, setClickCount] = useState(0);
+
+    // 💡 useRef stores the throttle lock status without causing re-renders
+    const isThrottled = useRef(false);
+
+    const handlePaymentClick = () => {
+        if (isThrottled.current) {
+            console.log('🚫 Ignored! Throttled for 1 second.');
+            return;
+        }
+
+        // Process Action
+        setClickCount((prev) => prev + 1);
+        console.log('✅ Payment Processed!');
+
+        // Lock Execution
+        isThrottled.current = true;
+
+        // Unlock after 1 second
+        setTimeout(() => {
+            isThrottled.current = false;
+        }, 1000);
+    };
+
+    return (
+        <div style={{ padding: '20px' }}>
+            <h3>Throttled Payment Button 💳</h3>
+            <button onClick={handlePaymentClick}>
+                Pay Now (Throttled 1s)
+            </button>
+            <p>Successful Requests Sent: {clickCount}</p>
+        </div>
+    );
+}
