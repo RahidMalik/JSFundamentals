@@ -696,3 +696,91 @@ Promise.resolve().then(() => {
 
 // 4. VVIP (Normal Code)
 console.log("4. Dulhay ka Dost: Main bhi direct khaunga!");
+
+//! 1. Debounce 🛑 (Intezar karo jab tak action ruk na jaye)
+// Concept: "Jab tak user lagatar action kar raha hai, main apna function nahi chalaunga. Jab user rukega (pause lega), uske X seconds baad main apna kaam karunga."
+
+let timer;
+function debounceSearch() {
+    clearTimeout(timer); // Purana timer cancel karo
+    timer = setTimeout(() => {
+        console.log("API Call: User ne typing rok di hai!");
+    }, 500); // 500ms ka pause aane par hi API call hogi
+}
+
+//! 2. Throttling ⏱️ (Time par pabandi laga do)
+// Concept: "User chahay 1 second mein 100 dafa button dabaye, main apna function har X seconds mein sirf EK BAAR hi chalaunga." Isme pause ka intezar nahi hota, isme rate limit(speed limit) lagai jati hai.
+
+let isReady = true;
+function throttleFire() {
+    if (!isReady) return; // Agar ready nahi hai, toh wapis jao (Ignore click)
+
+    console.log("🔫 Goli chal gayi!");
+    isReady = false; // Gun ko lock kar do
+
+    setTimeout(() => {
+        isReady = true; // 1 second baad gun dobara ready hogi
+    }, 1000);
+}
+// ! spread operator
+// 1. Spread Operator 📤 (Unpacking)
+// Kaam: Yeh kisi Array ya Object ke elements ko nikal kar alag alag(spread) kar deta hai.
+// Pehchan: Yeh hamesha function ko call karte waqt, ya naye Arrays / Objects banate waqt(Right side par) use hota hai.
+const boys = ["Ali", "Ahmed"];
+const girls = ["Sana", "Sara"];
+
+// Dono arrays ko khol kar ek naye array mein daal diya
+const allStudents = [...boys, ...girls, "Zain"];
+console.log(allStudents); // Output: ["Ali", "Ahmed", "Sana", "Sara", "Zain"]
+// ! rest operator
+// 2. Rest Operator 📥 (Packing)
+// Kaam: Yeh bikhri hui arguments ya bache hue(rest) elements ko jama karke wapas ek Array mein pack kar deta hai.
+// Pehchan: Yeh hamesha Function Parameters(define karte waqt) ya Destructuring(Left side par) use hota hai.Yeh hamesha aakhir(last) mein aata hai.
+
+// Kahan Use Hota Hai ?
+
+//     Functions mein Unlimited Arguments lene ke liye:
+// Sochein aapko ek function banana hai jo 2, 4, ya 10 kitne bhi numbers ko plus kare:
+// 'numbers' variable baki aane wali saari values ka ek Array ban jayega
+function sum(firstValue, ...numbers) {
+    console.log("Pehli value:", firstValue);
+    console.log("Baqi sab (Rest):", numbers); // Yeh ek array ban gaya hai
+}
+
+sum(10, 20, 30, 40, 50);
+// Output:
+// Pehli value: 10
+// Baqi sab (Rest): [20, 30, 40, 50]
+
+const fruits = ["Apple", "Banana", "Mango", "Orange", "Grapes"];
+
+const [fav1, fav2, ...bakiFruits] = fruits;
+
+console.log(fav1); // Output: "Apple"
+console.log(fav2); // Output: "Banana"
+console.log(bakiFruits); // Output: ["Mango", "Orange", "Grapes"] (Bache hue pack ho gaye)
+
+// ! Pure Function
+// ✅ Pure Function (Acha Bacha)
+// Yeh function dono rules follow kar raha hai.Jab bhi aap isay 2 aur 3 denge, yeh hamesha 5 dega.Yeh bahar ki kisi cheez ko nahi chher raha.
+function addNumbers(a, b) {
+    return a + b;
+}
+
+console.log(addNumbers(2, 3)); // Output: 5 (Hamesha 5 hi aayega)
+
+//! ❌ Impure Function (Kharab Bacha)
+function addWithRandom(a) {
+    // Math.random() ki waja se output har baar alag aayega
+    return a + Math.random();
+}
+
+console.log(addWithRandom(5)); // Output: 5.123
+console.log(addWithRandom(5)); // Output: 5.876 (Input same, lekin output badal gaya!)
+
+let totalAmount = 100; // Global variable
+
+function addToTotal(amount) {
+    totalAmount = totalAmount + amount; // ❌ Bahar ke variable ko change kar diya (Side Effect)
+    return totalAmount;
+}
