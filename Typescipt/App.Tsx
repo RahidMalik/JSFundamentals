@@ -80,3 +80,25 @@ function echo<T>(arg: T): T {
 // Result:
 const str = echo<string>("Hello"); // TS janta hai 'str' string hai
 const num = echo<number>(100); // TS janta hai 'num' number hai
+
+//! 5. Utility Types kya hain?
+
+//! 6. Type Inference kya hai?
+// Desi Analogy (Samajhdar Padosi):
+// Aapko har waqt padosi ko batane ki zaroorat nahi padti ke aap kya karne lage hain; aapke hath mein bat dekh kar woh khud samajh jata hai ke aap cricket khelne ja rahe hain. TypeScript bhi initial value dekh kar automatically variable ki type "guess" (infer) kar leta hai.
+
+// Humne yahan ': string' nahi likha, lekin TS ko pata hai yeh string hai
+let city = "Rawalpindi";
+
+// city = 100; // ❌ TS Error dega: Type 'number' is not assignable to type 'string'.
+
+// Function return type bhi TS khud infer kar leta hai
+function add(a: number, b: number) {
+  return a + b; // TS infers return type is 'number'
+}
+
+// Interview Answer:
+
+("Type Inference TypeScript ka wo mechanism hai jismein compiler variable ki initial value, default parameters, ya function ki return value dekh kar type automatically deduce (infer) kar leta hai. Is se humein har jagah explicitly types define nahi karni padti aur code clean rehta hai.");
+
+//! 7. Enums explain karein
