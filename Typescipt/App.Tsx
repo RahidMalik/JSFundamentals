@@ -102,3 +102,19 @@ function add(a: number, b: number) {
 ("Type Inference TypeScript ka wo mechanism hai jismein compiler variable ki initial value, default parameters, ya function ki return value dekh kar type automatically deduce (infer) kar leta hai. Is se humein har jagah explicitly types define nahi karni padti aur code clean rehta hai.");
 
 //! 7. Enums explain karein
+// 7. Enums explain karein
+// Desi Analogy (Restaurant Menu):
+// Aap waiter ko order dete waqt "Item number 3" kehte hain aur wo samajh jata hai ke "Biryani" laani hai. Enums (Enumerations) magic numbers ya strings ko aik meaningful naam de dete hain, taake code parhna asan ho jaye.
+
+enum OrderStatus {
+  Pending = "PENDING",
+  Shipped = "SHIPPED",
+  Delivered = "DELIVERED",
+}
+
+// Usage
+let currentStatus: OrderStatus = OrderStatus.Delivered;
+
+if (currentStatus === OrderStatus.Delivered) {
+  console.log("Package aagaya!");
+}
