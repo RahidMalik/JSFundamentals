@@ -118,3 +118,20 @@ let currentStatus: OrderStatus = OrderStatus.Delivered;
 if (currentStatus === OrderStatus.Delivered) {
   console.log("Package aagaya!");
 }
+
+// Interview Answer:
+
+("Enums named constants ka ek set define karne ka tareeqa hain. Jab humare paas fixed set of related values hon (jaise user roles, directions, ya API status), toh hum Enums use karte hain taake hardcoded strings/numbers ki bajaye readable aur maintainable code likh sakein.");
+
+//! 8. readonly aur const mein farq?
+// 1. const (Variable ko lock karta hai)
+const dbPassword = "password123";
+// dbPassword = "newPassword"; // ❌ Error
+
+interface DbConfig {
+  readonly host: string;
+  port: number;
+}
+const config: DbConfig = { host: "Localhost", port: 5000 };
+// config.host = "localhost" // Error cuz it is read-only propeerty
+config.port = 3000; // allow
