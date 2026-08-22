@@ -79,7 +79,7 @@ function echo<T>(arg: T): T {
 
 // Result:
 const str = echo<string>("Hello"); // TS janta hai 'str' string hai
-const num = echo<number>(100); // TS janta hai 'num' number hai
+const number = echo<number>(100); // TS janta hai 'num' number hai
 
 //! 5. Utility Types kya hain?
 
@@ -135,3 +135,77 @@ interface DbConfig {
 const config: DbConfig = { host: "Localhost", port: 5000 };
 // config.host = "localhost" // Error cuz it is read-only propeerty
 config.port = 3000; // allow
+
+//! 9. Interface aur Abstract Class mein farq?
+interface IPayment {
+  processPayment(amount: number): void;
+  saveToDatabase(id: string): void; // Sirf rule bataya hai
+}
+
+class StripePayment implements IPayment {
+  processPayment(amount: number) {
+    console.log(`Stripe se ${amount} charge ho gaye.`); // Stripe specific logic
+  }
+  saveToDatabase(id: string) {
+    console.log(`Database mein ${id} save ho gaya.`); // ⚠️ Duplicate Code
+  }
+}
+
+class PayPalPayment implements IPayment {
+  processPayment(amount: number) {
+    console.log(`PayPal se ${amount} charge ho gaye.`); // PayPal specific logic
+  }
+  saveToDatabase(id: string) {
+    console.log(`Database mein ${id} save ho gaya.`); // ⚠️ Duplicate Code
+  }
+}
+// 🏗️ Adha bana hua ghar (Abstract Class)
+abstract class BasePayment {
+  // 1. Fully Implemented Method (Dhancha / Real Code)
+  // Yeh Stripe aur PayPal dono ko muft (free) mein mil jayega
+  saveToDatabase(id: string) {
+    console.log(`Database mein ${id} save ho gaya. Common Code!`);
+  }
+
+  // 2. Abstract Method (Naksha / Rule)
+  // Iske aage body {} nahi hai. Yeh child class ko lazmi khud likhna hoga
+  abstract processPayment(amount: number): void;
+}
+
+// 🏠 Mukammal Ghar 1 (Child Class)
+class Stripe extends BasePayment {
+  // Humein sirf Stripe ki logic likhni pari, saveToDatabase automatically mil gaya!
+  processPayment(amount: number) {
+    console.log(`💳 Stripe logic: Charging $${amount}`);
+  }
+}
+
+// 🏠 Mukammal Ghar 2 (Child Class)
+class PayPal extends BasePayment {
+  processPayment(amount: number) {
+    console.log(`🅿️ PayPal logic: Redirecting for $${amount}`);
+  }
+}
+
+// 🚀 Use karke dekhte hain
+const myPayment = new Stripe();
+myPayment.processPayment(500); // Child ka apna method chala
+myPayment.saveToDatabase("TXN_123"); // Parent (Abstract class) ka method chala
+
+// const test = new BasePayment(); // ❌ ERROR: Cannot create an instance of an abstract class.
+//! 10. Tuples kya hain?
+// Desi Analogy (VIP Fixed Seats):
+// Normal Array ek aam bus jaisi hai, jismein koi bhi kahin bhi beth jaye (agar type string[] hai toh sirf strings aayenge par length aur order koi fix nahi). Tuple ek Cinema ki Premium Row hai: Row mein sirf 2 seats hain, Seat 1 par lazmi number aayega, aur Seat 2 par lazmi string.
+
+// Code Example:
+
+// TypeScript
+// Tuple: Length bhi fix hai, aur index ke hisaab se type bhi fix hai
+let coordinates: [number, number] = [33.5651, 73.0169];
+
+// React ka useState hook basically ek Tuple hi return karta hai!
+// Jaise: const [count, setCount] = useState(0);
+// Iski type conceptually yeh hoti hai: [number, function]
+// Interview Answer:
+
+("Tuple TypeScript mein ek special type ki array hai jismein array ki exact length aur har specific index ki data type pehle se defined aur fixed hoti hai. React hooks, khaas tor par useState, Tuples ka ek bohot aam use case hain kyunki wo fixed length (2 items) array return karte hain.");
